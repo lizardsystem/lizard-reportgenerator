@@ -1,0 +1,16 @@
+<h3>{{ title }}</h3>
+
+{% if reports %}
+<ul>
+{% for report in reports %}
+    <li>{{ report.name }}</li>
+    <ul>
+    {% for generated_report in report.generatedreport_set.all %}
+        <li>{{ generated_report.area}} | {{ generated_report.generated_on|timesince }} geleden | <a href="">{{ generated_report.document_rtf }}</a> | <a href="">{{ generated_report.document_pdf }}</a></li>
+    {% endfor %}
+    </ul>
+{% endfor %}
+</ul>
+{% else %}    
+<em>Geen rapportages gevonden</em>
+{% endif %}
