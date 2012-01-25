@@ -1,0 +1,10 @@
+Changelog of lizard-reportgenerator
+===================================================
+
+
+0.1 (unreleased)
+----------------
+- This project was copied from an earlier attempt, but wasn't named
+  properly (lizard-htmlreport) and had buildout configuration trouble.
+
+- Initial library skeleton created by nensskel.  [Gijs Nijholt]
