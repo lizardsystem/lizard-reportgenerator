@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'staticfiles',
     'compressor',
     'south',
+    'lizard_area',
     'django_nose',
     'django_extensions',
     'django.contrib.admin',

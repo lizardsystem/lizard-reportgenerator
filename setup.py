@@ -14,6 +14,7 @@ install_requires = [
     'django-extensions',
     'django-nose',
     'lizard-ui >= 3.0',
+    'lizard-area',
     'pkginfo',
     'clint',
     'PyRTF',
