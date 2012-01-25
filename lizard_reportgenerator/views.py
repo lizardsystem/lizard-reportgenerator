@@ -1,7 +1,7 @@
 # (c) Nelen & Schuurmans.  GPL licensed, see LICENSE.txt.
 from django.conf import settings
-from lizard_htmlreport.models import ReportTemplate
-from lizard_htmlreport.models import GeneratedReport
+from lizard_reportgenerator.models import ReportTemplate
+from lizard_reportgenerator.models import GeneratedReport
 from lizard_security.models import DataSet
 
 from PyRTF import *
@@ -18,7 +18,7 @@ def OpenFile( name ) :
 	return file( '%s.rtf' % name, 'w' )
 
 
-def index(request, template='lizard_htmlreport/index.html'):
+def index(request, template='lizard_reportgenerator/index.html'):
 
     kind = request.GET.get('kind')
 

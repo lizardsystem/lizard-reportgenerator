@@ -1,6 +1,6 @@
 from django.contrib import admin
-from lizard_htmlreport.models import GeneratedReport
-from lizard_htmlreport.models import ReportTemplate
+from lizard_reportgenerator.models import GeneratedReport
+from lizard_reportgenerator.models import ReportTemplate
 from lizard_security.admin import SecurityFilteredAdmin
 
 
