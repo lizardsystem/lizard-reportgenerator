@@ -4,6 +4,10 @@ from django.conf.urls.defaults import patterns
 from django.conf.urls.defaults import url
 from django.contrib import admin
 
+from lizard_reportgenerator.views import index
+from lizard_reportgenerator.views import generate_rtf
+from lizard_reportgenerator.views import generate_pdf
+
 from lizard_ui.urls import debugmode_urlpatterns
 
 admin.autodiscover()
