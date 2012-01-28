@@ -8,13 +8,14 @@ class GeneratedReportInline(admin.TabularInline):
     model = GeneratedReport
 
 class ReportTemplateAdmin(admin.ModelAdmin):
-    list_display = ('name',)
-    inlines = [
-        GeneratedReportInline
-    ]
+    list_display = ('name','slug', 'kind', 'generation_module', 'generation_function', 'extra_arguments', 'rtf_support', 'pdf_support', 'csv_support', 'xls_support'  )
+#    inlines = [
+#        GeneratedReportInline
+#    ]
+
 
 class GeneratedReportAdmin(SecurityFilteredAdmin):
-    list_display = ('document_rtf', 'document_pdf', 'template', 'area', 'generated_on', 'visible')
+    list_display = ('rtf_document', 'pdf_document', 'template', 'area', 'generated_on', 'visible')
     
 
 

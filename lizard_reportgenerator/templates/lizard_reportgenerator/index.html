@@ -1,16 +1,40 @@
-<h3>{{ title }}</h3>
+<h2>Rapportage overzicht</h2>
 
-{% if reports %}
-<ul>
-{% for report in reports %}
-    <li>{{ report.name }}</li>
+{% for rg in report_bloks %}
+    <h3> {{ rg.title }}
+        {% if rg.algemeen %} }</h3>{% else %} {% if rg.area %}
+           -  {{ rg.area.name }}</h3> <a href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer ander gebied</a>
+        {% else %}
+            - <a href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer een gebied</a></h3>
+        {% endif %}{% endif %}
     <ul>
-    {% for generated_report in report.generatedreport_set.all %}
-        <li>{{ generated_report.area}} | {{ generated_report.generated_on|timesince }} geleden | <a href="">{{ generated_report.document_rtf }}</a> | <a href="">{{ generated_report.document_pdf }}</a></li>
+    {% for report_template in rg.report_templates %}
+        <li>{{ report_template.name }} -
+            {% if report_template.rtf_support %}<a href="{% url reportgenerator-generate 'rtf' report_template.id rg.area.ident %}">rtf</a>  {% endif %}
+            {% if report_template.pdf_support %}<a href="{% url reportgenerator-generate 'pdf' report_template.id rg.area.ident %}">pdf</a>  {% endif %}
+            {% if report_template.csv_support %}<a href="/">csv</a>  {% endif %}
+            {% if report_template.xls_support%}<a href="/">xls</a>{% endif %}
+           </li>
     {% endfor %}
     </ul>
+    <h4> <a href="javascript:Ext.get('lzrep_{{ rg.title|lower }}').show();Ext.get('lzrep_{{ rg.title|lower }}').dom.style.removeProperty('height')">archief:</a></h4>
+    <div style="visibility:hidden;height:0"  id="lzrep_{{ rg.title|lower }}" >
+    <table class="x-grid-table" >
+    {% for generated_report in rg.generated_reports %}
+        <tr class="x-grid-row">
+        <td class="x-grid-cell x-grid-rowwrap-div">
+            {{ generated_report.area}}
+        </td ><td class="x-grid-cell x-grid-rowwrap-div">
+            {{ generated_report.generated_on|date:"d-m-Y" }}
+        </td ><td class="x-grid-cell x-grid-rowwrap-div">
+            {% if generated_report.rtf_document %}<a href="/">rtf</a>  {% endif %}
+            {% if generated_report.pdf_document %}<a href="/">pdf</a>  {% endif %}
+            {% if generated_report.csv_document %}<a href="/">csv</a>  {% endif %}
+            {% if generated_report.xls_document %}<a href="/">xls</a>{% endif %}
+        </td>
+        </tr>
+    {% endfor %}
+    </table>
+    </div>
 {% endfor %}
-</ul>
-{% else %}    
-<em>Geen rapportages gevonden</em>
-{% endif %}
+

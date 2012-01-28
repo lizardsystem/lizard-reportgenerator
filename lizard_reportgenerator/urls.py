@@ -5,8 +5,7 @@ from django.conf.urls.defaults import url
 from django.contrib import admin
 
 from lizard_reportgenerator.views import index
-from lizard_reportgenerator.views import generate_rtf
-from lizard_reportgenerator.views import generate_pdf
+from lizard_reportgenerator.views import generate_report
 
 from lizard_ui.urls import debugmode_urlpatterns
 
@@ -15,7 +14,6 @@ admin.autodiscover()
 urlpatterns = patterns(
     '',
     url(r'^$', index, name='reportgenerator-index'),
-    url(r'^generate/rtf/$', generate_rtf, name='reportgenerator-generate-rtf'),
-    url(r'^generate/pdf/$', generate_pdf, name='reportgenerator-generate-pdf'),
+    url(r'^generate/(?P<format>.*)/(?P<report_id>.*)/(?P<area_id>.*)/$', generate_report, name='reportgenerator-generate'),
     )
 urlpatterns += debugmode_urlpatterns()
