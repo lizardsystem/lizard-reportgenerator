@@ -1,8 +1,10 @@
+<div class=lizard>
+
 <h2>Rapportage overzicht</h2>
 
 {% for rg in report_bloks %}
     <h3> {{ rg.title }}
-        {% if rg.algemeen %} }</h3>{% else %} {% if rg.area %}
+        {% if rg.algemeen %}</h3>{% else %} {% if rg.area %}
            -  {{ rg.area.name }}</h3> <a href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer ander gebied</a>
         {% else %}
             - <a href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer een gebied</a></h3>
@@ -17,7 +19,7 @@
            </li>
     {% endfor %}
     </ul>
-    <h4> <a href="javascript:Ext.get('lzrep_{{ rg.title|lower }}').show();Ext.get('lzrep_{{ rg.title|lower }}').dom.style.removeProperty('height')">archief:</a></h4>
+    <h4> <button onclick="javascript:Ext.get('lzrep_{{ rg.title|lower }}').show();Ext.get('lzrep_{{ rg.title|lower }}').dom.style.removeProperty('height')">Toon archief</button></h4>
     <div style="visibility:hidden;height:0"  id="lzrep_{{ rg.title|lower }}" >
     <table class="x-grid-table" >
     {% for generated_report in rg.generated_reports %}
@@ -37,4 +39,6 @@
     </table>
     </div>
 {% endfor %}
+
+</div>
 
