@@ -19,18 +19,23 @@
     </ul>
     <h4><button onclick="javascript:Ext.get('lzrep_{{ rg.title|lower }}').show();Ext.get('lzrep_{{ rg.title|lower }}').dom.style.removeProperty('height');">Toon archief</button></h4>
     <div style="visibility:hidden;height:0;"  id="lzrep_{{ rg.title|lower }}" >
-    <table class="x-grid-table">
+    <table class="">
+        <tr class="yellow">
+            <td class="width">Titel</td>
+            <td class="adjacent">Datum</td>
+            <td class="adjacent">Export</td>
+        </tr>
     {% for generated_report in rg.generated_reports %}
-        <tr class="x-grid-row">
-        <td class="x-grid-cell x-grid-rowwrap-div">
+        <tr>
+        <td>
             {{ generated_report.area}}
-        </td ><td class="x-grid-cell x-grid-rowwrap-div">
+        </td ><td>
             {{ generated_report.generated_on|date:"d-m-Y" }}
-        </td ><td class="x-grid-cell x-grid-rowwrap-div">
-            {% if generated_report.rtf_document %}<a href="/">rtf</a>{% endif %}
-            {% if generated_report.pdf_document %}<a href="/">pdf</a>{% endif %}
+        </td ><td>
+            {% if generated_report.rtf_document %}<a href="/">rtf</a> |{% endif %}
+            {% if generated_report.pdf_document %}<a href="/">pdf</a> |{% endif %}
             {% if generated_report.csv_document %}<a href="/">csv</a>{% endif %}
-            {% if generated_report.xls_document %}<a href="/">xls</a>{% endif %}
+            {% if generated_report.xls_document %}| <a href="/">xls</a>{% endif %}
         </td>
         </tr>
     {% endfor %}
