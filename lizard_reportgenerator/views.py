@@ -10,6 +10,10 @@ from django.http import Http404
 from django.template import RequestContext
 from django.http import HttpResponse
 
+from cgi import escape
+import cStringIO as StringIO
+import ho.pisa as pisa
+
 
 def index(request, template='lizard_reportgenerator/index.html'):
     '''
@@ -78,8 +82,17 @@ def get_pdf_report(report_template, request, area_id=None):
 
     report = getattr(report_module, report_template.generation_function)(request, format='html', report_id=report_id, area_id=area_id)
 
-    #create pdf
+    # template = get_template(report_module)
+    # context = Context(context_dict)
+    # html = template.render(context)
+    result = StringIO.StringIO()
 
+    pdf = pisa.pisaDocument(
+        StringIO.StringIO(report.encode("ISO-8859-1")), result) # Latin
+        # StringIO.StringIO(html.encode("UTF-8")), result) # Unicode
+    if not pdf.err:
+        return result
+    return HttpResponse('We had some errors<pre>%s</pre>' % escape(html))
 
 
 
@@ -95,7 +108,7 @@ def generate_report(request, format='pdf', report_id=None, area_id=None):
 
     if format == 'pdf':
         pdf = get_pdf_report(report_template, request, area_id)
-        return HttpResponse(pdf, mimetype='application/pdf')
+        return HttpResponse(pdf.getvalue(), mimetype='application/pdf')
 
     elif format == 'html':
         report = getattr(report_module, report_template.generation_function)(request, format='html', report_id=report_id, area_id=area_id)
