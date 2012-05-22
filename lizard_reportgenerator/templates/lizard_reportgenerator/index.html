@@ -12,9 +12,10 @@
         <li>{{ report_template.name }} -
             {% if report_template.rtf_support %}<a href="{% url reportgenerator-generate 'rtf' report_template.id rg.area.ident %}">rtf</a>  {% endif %}
             {% if report_template.pdf_support %}<a href="{% url reportgenerator-generate 'pdf' report_template.id rg.area.ident %}">pdf</a>  {% endif %}
-            {% if report_template.csv_support %}<a href="/">csv</a>{% endif %}
-            {% if report_template.xls_support%}<a href="/">xls</a>{% endif %}
-           </li>
+            {% if report_template.csv_support %}<a href="{% url reportgenerator-generate 'csv' report_template.id rg.area.ident %}">csv</a>{% endif %}
+            {% if report_template.xls_support%}<a href="{% url reportgenerator-generate 'xls' report_template.id rg.area.ident %}">xls</a>{% endif %}
+            {% if report_template.xls_support%}<a href="{% url reportgenerator-generate 'html' report_template.id rg.area.ident %}">html</a>{% endif %}
+        </li>
     {% endfor %}
     </ul>
     <h4><button onclick="javascript:Ext.get('lzrep_{{ rg.title|lower }}').show();Ext.get('lzrep_{{ rg.title|lower }}').dom.style.removeProperty('height');">Toon archief</button></h4>

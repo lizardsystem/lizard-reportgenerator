@@ -8,6 +8,7 @@ from lizard_security.models import DataSet
 from django.shortcuts import render_to_response
 from django.http import Http404
 from django.template import RequestContext
+from django.http import HttpResponse
 
 
 def index(request, template='lizard_reportgenerator/index.html'):
@@ -20,7 +21,7 @@ def index(request, template='lizard_reportgenerator/index.html'):
     #todo: make function less KRW specific
 
     aan_afvoergebied_id = request.GET.get('aan_afvoergebied', None)
-    krw_gebied_id = request.GET.get('krw_gebied', None)
+    krw_gebied_id = request.GET.get('krw_waterlichaam', None)
 
     aan_afvoergebied = None
     krw_gebied = None
@@ -71,6 +72,17 @@ def index(request, template='lizard_reportgenerator/index.html'):
         context_instance=RequestContext(request))
 
 
+def get_pdf_report(report_template, request, area_id=None):
+
+    report_module = __import__(report_template.generation_module, fromlist='something')
+
+    report = getattr(report_module, report_template.generation_function)(request, format='html', report_id=report_id, area_id=area_id)
+
+    #create pdf
+
+
+
+
 
 def generate_report(request, format='pdf', report_id=None, area_id=None):
     '''
@@ -80,17 +92,24 @@ def generate_report(request, format='pdf', report_id=None, area_id=None):
     report_template = ReportTemplate.objects.get(pk=report_id)
     report_module = __import__(report_template.generation_module, fromlist='something')
     #todo, improve interaction with return, saving achieve, etc
-    report = getattr(report_module, report_template.generation_function)(request, format=format, report_id=report_id, area_id=area_id)
 
-    return report
+    if format == 'pdf':
+        pdf = get_pdf_report(report_template, request, area_id)
+        return HttpResponse(pdf, mimetype='application/pdf')
 
-    ####
-    #    response = HttpResponse(
-    #        "Error, unknown format",
-    #        content_type='application/txt'
-    #    )
-    #
-    #    response['Content-Disposition'] = 'attachment; filename=error.txt'
-    #
-    #    return HttpResponse(response)
-    ####
+    elif format == 'html':
+        report = getattr(report_module, report_template.generation_function)(request, format='html', report_id=report_id, area_id=area_id)
+        return HttpResponse(report, mimetype='text/html')
+
+    elif format == 'rtf':
+        report = getattr(report_module, report_template.generation_function)(request, format='rtf', report_id=report_id, area_id=area_id)
+        return HttpResponse(report, mimetype='application/rtf')
+
+    elif format == 'csv':
+        pass
+    elif format == 'xls':
+        pass
+    else:
+        return HttpResponse('format niet ondersteund', mimetype='text/html')
+
+
