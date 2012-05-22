@@ -76,12 +76,26 @@ def index(request, template='lizard_reportgenerator/index.html'):
         context_instance=RequestContext(request))
 
 
+
+class Error(Exception):
+    """Base class for errors in this module."""
+    pass
+
+class OutOfRangeError(Error):
+    def __init__(self, msg):
+        Exception.__init__(self, msg)
+
+
+
+
 def get_pdf_report(report_template, request, area_id=None):
 
     report_module = __import__(report_template.generation_module, fromlist='something')
 
-    report = getattr(report_module, report_template.generation_function)(request, format='html', report_id=report_id, area_id=area_id)
+    report = getattr(report_module, report_template.generation_function)(request, format='html', area_id=area_id)
 
+    print "report: ", report
+    
     # template = get_template(report_module)
     # context = Context(context_dict)
     # html = template.render(context)
