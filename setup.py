@@ -18,8 +18,11 @@ install_requires = [
     'pkginfo',
     'clint',
     'PyRTF',
-    'xlrd',
     'xlwt',
+    'reportlab',
+    'pisa',
+    'html5lib',
+    'pyPdf',
     ],
 
 tests_require = [

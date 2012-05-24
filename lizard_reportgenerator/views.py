@@ -14,6 +14,9 @@ import xlwt as excel
 from StringIO import StringIO
 import csv
 
+from cgi import escape
+import cStringIO as StringIO
+import ho.pisa as pisa
 
 
 def index(request, template='lizard_reportgenerator/index.html'):
@@ -77,13 +80,37 @@ def index(request, template='lizard_reportgenerator/index.html'):
         context_instance=RequestContext(request))
 
 
+
+class Error(Exception):
+    """Base class for errors in this module."""
+    pass
+
+class OutOfRangeError(Error):
+    def __init__(self, msg):
+        Exception.__init__(self, msg)
+
+
+
+
 def get_pdf_report(report_template, request, area_id=None):
 
     report_module = __import__(report_template.generation_module, fromlist='something')
 
-    report = getattr(report_module, report_template.generation_function)(request, format='html', report_id=report_id, area_id=area_id)
+    report = getattr(report_module, report_template.generation_function)(request, format='html', area_id=area_id)
 
-    #create pdf
+    print "report: ", report
+    
+    # template = get_template(report_module)
+    # context = Context(context_dict)
+    # html = template.render(context)
+    result = StringIO.StringIO()
+    pdf = pisa.pisaDocument(
+    StringIO.StringIO(report.encode("ISO-8859-1")), result) # Latin
+    # StringIO.StringIO(html.encode("UTF-8")), result) # Unicode
+    if not pdf.err:
+        return result
+    return HttpResponse('We had some errors<pre>%s</pre>' % escape(html))
+
 
 from django.utils import encoding
 
@@ -195,7 +222,7 @@ def generate_report(request, format='pdf', report_id=None, area_id=None):
 
     if format == 'pdf':
         pdf = get_pdf_report(report_template, request, area_id)
-        return HttpResponse(pdf, mimetype='application/pdf')
+        return HttpResponse(pdf.getvalue(), mimetype='application/pdf')
 
     elif format == 'html':
         report = getattr(report_module, report_template.generation_function)(request, format='html', report_id=report_id, area_id=area_id)
