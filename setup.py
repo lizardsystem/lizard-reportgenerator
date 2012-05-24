@@ -18,6 +18,8 @@ install_requires = [
     'pkginfo',
     'clint',
     'PyRTF',
+    'xlrd',
+    'xlwt',
     ],
 
 tests_require = [

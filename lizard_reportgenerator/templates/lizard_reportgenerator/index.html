@@ -1,23 +1,25 @@
 <div class=lizard>
 <h2>Rapportage overzicht</h2>
 {% for rg in report_bloks %}
-    <h3 style="border-top: 1px solid #ccc;">{{ rg.title }}
+    <h3 >{{ rg.title }}
         {% if rg.algemeen %}</h3>{% else %} {% if rg.area %}
-           -  {{ rg.area.name }}</h3> <a href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer ander gebied</a>
+           -  {{ rg.area.name }} - <a style="font-size: smaller;" href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer ander gebied</a></h3>
         {% else %}
-            - <a href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer een gebied</a></h3>
+            - <a style="font-size: smaller;" href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer een gebied</a></h3>
         {% endif %}{% endif %}
-    <ul>
+
     {% for report_template in rg.report_templates %}
-        <li>{{ report_template.name }} -
+
+        - {{ report_template.name }} -
             {% if report_template.rtf_support %}<a href="{% url reportgenerator-generate 'rtf' report_template.id rg.area.ident %}">rtf</a>  {% endif %}
             {% if report_template.pdf_support %}<a href="{% url reportgenerator-generate 'pdf' report_template.id rg.area.ident %}">pdf</a>  {% endif %}
             {% if report_template.csv_support %}<a href="{% url reportgenerator-generate 'csv' report_template.id rg.area.ident %}">csv</a>{% endif %}
             {% if report_template.xls_support%}<a href="{% url reportgenerator-generate 'xls' report_template.id rg.area.ident %}">xls</a>{% endif %}
-            {% if report_template.xls_support%}<a href="{% url reportgenerator-generate 'html' report_template.id rg.area.ident %}">html</a>{% endif %}
-        </li>
+            <a href="{% url reportgenerator-generate 'html' report_template.id rg.area.ident %}">html</a>
+        <br>
     {% endfor %}
-    </ul>
+    <br>
+
     <h4><button onclick="javascript:Ext.get('lzrep_{{ rg.title|lower }}').show();Ext.get('lzrep_{{ rg.title|lower }}').dom.style.removeProperty('height');">Toon archief</button></h4>
     <div style="visibility:hidden;height:0;"  id="lzrep_{{ rg.title|lower }}" >
     <table class="">
@@ -41,7 +43,10 @@
         </tr>
     {% endfor %}
     </table>
+    <br>
     </div>
+    <div style="border-bottom: 1px solid #ccc;"></div>
+    <br>
 {% endfor %}
 </div>
 
