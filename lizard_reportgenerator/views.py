@@ -9,6 +9,7 @@ from django.shortcuts import render_to_response
 from django.http import Http404
 from django.template import RequestContext
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 
 import xlwt as excel
 from StringIO import StringIO
@@ -31,6 +32,12 @@ def index(request, template='lizard_reportgenerator/index.html'):
     aan_afvoergebied_id = request.GET.get('aan_afvoergebied', None)
     krw_gebied_id = request.GET.get('krw_waterlichaam', None)
 
+    if request.user.is_superuser:
+        data_sets = DataSet.objects.all()
+    else:
+        data_set_ids = getattr(request, 'ALLOWED_DATA_SET_IDS', None)
+        data_sets = DataSet.objects.filter(id__in=data_set_ids)
+
     aan_afvoergebied = None
     krw_gebied = None
 
@@ -50,7 +57,7 @@ def index(request, template='lizard_reportgenerator/index.html'):
         'title': 'Algemeen',
         'algemeen': True,
         'report_templates': ReportTemplate.objects.filter(kind='algemeen'),
-        'generated_reports': GeneratedReport.objects.filter(template__kind='algemeen')
+        'generated_reports': GeneratedReport.objects.filter(template__kind='algemeen'),
     })
 
     report_bloks.append({
@@ -76,7 +83,11 @@ def index(request, template='lizard_reportgenerator/index.html'):
 
     return render_to_response(
         template,
-        locals(),
+        {
+            'data_sets': data_sets,
+            'report_bloks': report_bloks,
+
+        },
         context_instance=RequestContext(request))
 
 
@@ -92,11 +103,11 @@ class OutOfRangeError(Error):
 
 
 
-def get_pdf_report(report_template, request, area_id=None):
+def get_pdf_report(report_template, username, area_id=None):
 
     report_module = __import__(report_template.generation_module, fromlist='something')
 
-    report = getattr(report_module, report_template.generation_function)(request, format='html', area_id=area_id)
+    report = getattr(report_module, report_template.generation_function)(username, format='html', area_id=area_id)
 
     print "report: ", report
     
@@ -137,7 +148,7 @@ def create_csv_from_grid(grid):
         create csv from a grid with rows and cols
     """
 
-    buffer = StringIO()
+    buffer = StringIO.StringIO()
 
     print len(grid)
 
@@ -182,14 +193,8 @@ def create_xls_from_grid(grid):
     wb.add_style(st1)
     wb.add_style(st2)
 
-    query = 'xxxx'
-    ws.write( 0, 0, query, st1)
-
     c = 0
-    #for field in table_fields:
-    #    ws.write( 1, c, field['name'], st1)
-    #    c = c + 1
-    r=2
+    r = 0
 
     for row in grid:
         c = 0
@@ -204,48 +209,73 @@ def create_xls_from_grid(grid):
             ws.flush_row_data()
         r = r + 1
 
-    buffer = StringIO()
+    buffer = StringIO.StringIO()
     wb.save(buffer)
     del wb
     buffer.seek(0)
 
     return  buffer
 
-def generate_report(request, format='pdf', report_id=None, area_id=None):
+def generate_report(request_or_username, format='pdf', report_id=None, area_id=None, return_as_file=False):
     '''
         function calls generation functions (specified in the configuration) and returns document
     '''
+
+    if type(request_or_username) == str:
+        username = request_or_username
+    else:
+        username = request_or_username.user.get_full_name()
+
+
 
     report_template = ReportTemplate.objects.get(pk=report_id)
     report_module = __import__(report_template.generation_module, fromlist='something')
     #todo, improve interaction with return, saving achieve, etc
 
     if format == 'pdf':
-        pdf = get_pdf_report(report_template, request, area_id)
-        return HttpResponse(pdf.getvalue(), mimetype='application/pdf')
+        pdf = get_pdf_report(report_template, username, area_id)
+        if return_as_file:
+            return pdf
+        else:
+            return HttpResponse(pdf.getvalue(), mimetype='application/pdf')
 
     elif format == 'html':
-        report = getattr(report_module, report_template.generation_function)(request, format='html', report_id=report_id, area_id=area_id)
+        report = getattr(report_module, report_template.generation_function)(username, format='html', report_id=report_id, area_id=area_id)
         return HttpResponse(report, mimetype='text/html')
 
     elif format == 'rtf':
-        report = getattr(report_module, report_template.generation_function)(request, format='rtf', report_id=report_id, area_id=area_id)
-        return HttpResponse(report, mimetype='application/rtf')
+        report = getattr(report_module, report_template.generation_function)(username, format='rtf', report_id=report_id, area_id=area_id)
+        if return_as_file:
+            return report
+        else:
+            return HttpResponse(report, mimetype='application/rtf')
 
     elif format == 'csv':
-        grid = getattr(report_module, report_template.generation_function)(request, format='grid', report_id=report_id, area_id=area_id)
+        grid = getattr(report_module, report_template.generation_function)(username, format='grid', report_id=report_id, area_id=area_id)
         csv = create_csv_from_grid(grid)
-        response = HttpResponse(csv.read(), mimetype='application/csv')
-        response['Content-Disposition'] = 'attachment; filename="%s.csv"'%'rapport'
-        return response
+        if return_as_file:
+            return csv
+        else:
+            response = HttpResponse(csv.read(), mimetype='application/csv')
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"'%'rapport'
+            return response
 
     elif format == 'xls':
-        grid = getattr(report_module, report_template.generation_function)(request, format='grid', report_id=report_id, area_id=area_id)
+        grid = getattr(report_module, report_template.generation_function)(username, format='grid', report_id=report_id, area_id=area_id)
         xls = create_xls_from_grid(grid)
-        response = HttpResponse(xls.read(), mimetype='application/xls')
-        response['Content-Disposition'] = 'attachment; filename="%s.xls"'%'rapport'
-        return response
+        if return_as_file:
+            return xls
+        else:
+            response = HttpResponse(xls.read(), mimetype='application/xls')
+            response['Content-Disposition'] = 'attachment; filename="%s.xls"'%'rapport'
+            return response
     else:
         return HttpResponse('format niet ondersteund', mimetype='text/html')
 
 
+def get_generated_report(request,generated_report_id=None,file_format='pdf'):
+
+    generated_report = get_object_or_404(GeneratedReport, id=generated_report_id)
+    response = HttpResponse(generated_report.get_file(file_format), mimetype='application/'+file_format)
+    response['Content-Disposition'] = 'attachment;'
+    return response

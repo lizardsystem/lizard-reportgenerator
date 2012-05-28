@@ -6,6 +6,8 @@ import datetime
 from lizard_area.models import Area
 from lizard_security.models import DataSet
 from lizard_security.manager import FilteredManager
+from vss.settings import MEDIA_ROOT
+import os
 
 REPORT_TEMPLATE_TYPES = (
     ('algemeen', u'Algemeen'),
@@ -53,7 +55,7 @@ class ReportTemplate(models.Model):
 
 class GeneratedReport(models.Model):
     template = models.ForeignKey(ReportTemplate)
-    area = models.ForeignKey(Area)
+    area = models.ForeignKey(Area, blank=True, null=True)
     data_set = models.ForeignKey(DataSet, blank=True, null=True)
 
     rtf_document = models.CharField(default='', blank=True, max_length=255) # Stores filenames
@@ -70,6 +72,28 @@ class GeneratedReport(models.Model):
     class Meta:
         ordering = ('-generated_on', 'template__name')
 
+    def save_file(self, file_buffer, file_format, name):
+
+        file_location = os.path.join('reportgenerator', str(self.data_set), "%s_-_%i.%s"%(name, self.id, file_format))
+        setattr(self, file_format + '_document',file_location)
+        full_file_location = os.path.join(MEDIA_ROOT, file_location)
+
+        d = os.path.dirname(full_file_location)
+        if not os.path.exists(d):
+            os.makedirs(d)
+        f = file(full_file_location, "w")
+        file_buffer.seek(0)
+        f.write(file_buffer.read())
+        f.close()
+        return True
+
+    def get_file(self, file_format):
+
+        file_location = getattr(self, file_format + '_document')
+        full_file_location = os.path.join(MEDIA_ROOT, file_location)
+
+        f = file(full_file_location, "r")
+        return f.read()
 
     def __unicode__(self):
         return str(self.template.name)

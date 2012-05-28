@@ -1,23 +1,39 @@
 <div class=lizard>
 <h2>Rapportage overzicht</h2>
 {% for rg in report_bloks %}
-    <h3 >{{ rg.title }}
-        {% if rg.algemeen %}</h3>{% else %} {% if rg.area %}
-           -  {{ rg.area.name }} - <a style="font-size: smaller;" href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer ander gebied</a></h3>
+    {% if rg.algemeen %}
+        <h3>{{ rg.title }}</h3>
+        {% for data_set in data_sets %}
+            {% for report_template in rg.report_templates %}
+                - {{ report_template.name }} - {{ data_set.name }} -
+                {% if report_template.rtf_support %}<a href="{% url reportgenerator-generate 'rtf' report_template.id data_set.id %}">rtf</a>  {% endif %}
+                {% if report_template.pdf_support %}<a href="{% url reportgenerator-generate 'pdf' report_template.id data_set.id %}">pdf</a>  {% endif %}
+                {% if report_template.csv_support %}<a href="{% url reportgenerator-generate 'csv' report_template.id data_set.id %}">csv</a>{% endif %}
+                {% if report_template.xls_support%}<a href="{% url reportgenerator-generate 'xls' report_template.id data_set.id %}">xls</a>{% endif %}
+                <a href="{% url reportgenerator-generate 'html' report_template.id data_set.id %}">html</a>
+                <br>
+            {% endfor %}
+        {% endfor %}
+    {% else %}
+        {% if rg.area %}
+            <h3>{{ rg.title }} -  {{ rg.area.name }} - <a style="font-size: smaller;" href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer ander gebied</a></h3>
         {% else %}
             - <a style="font-size: smaller;" href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer een gebied</a></h3>
-        {% endif %}{% endif %}
+        {% endif %}
+        {% for report_template in rg.report_templates %}
 
-    {% for report_template in rg.report_templates %}
-
-        - {{ report_template.name }} -
-            {% if report_template.rtf_support %}<a href="{% url reportgenerator-generate 'rtf' report_template.id rg.area.ident %}">rtf</a>  {% endif %}
-            {% if report_template.pdf_support %}<a href="{% url reportgenerator-generate 'pdf' report_template.id rg.area.ident %}">pdf</a>  {% endif %}
-            {% if report_template.csv_support %}<a href="{% url reportgenerator-generate 'csv' report_template.id rg.area.ident %}">csv</a>{% endif %}
-            {% if report_template.xls_support%}<a href="{% url reportgenerator-generate 'xls' report_template.id rg.area.ident %}">xls</a>{% endif %}
-            <a href="{% url reportgenerator-generate 'html' report_template.id rg.area.ident %}">html</a>
-        <br>
-    {% endfor %}
+            - {{ report_template.name }}
+            {% if rg.area %}
+                -
+                {% if report_template.rtf_support %}<a href="{% url reportgenerator-generate 'rtf' report_template.id rg.area.ident %}">rtf</a>  {% endif %}
+                {% if report_template.pdf_support %}<a href="{% url reportgenerator-generate 'pdf' report_template.id rg.area.ident %}">pdf</a>  {% endif %}
+                {% if report_template.csv_support %}<a href="{% url reportgenerator-generate 'csv' report_template.id rg.area.ident %}">csv</a>{% endif %}
+                {% if report_template.xls_support%}<a href="{% url reportgenerator-generate 'xls' report_template.id rg.area.ident %}">xls</a>{% endif %}
+                <a href="{% url reportgenerator-generate 'html' report_template.id rg.area.ident %}">html</a>
+            {% endif %}
+            <br>
+        {% endfor %}
+    {% endif %}
     <br>
 
     <h4><button onclick="javascript:Ext.get('lzrep_{{ rg.title|lower }}').show();Ext.get('lzrep_{{ rg.title|lower }}').dom.style.removeProperty('height');">Toon archief</button></h4>
@@ -26,19 +42,23 @@
         <tr class="yellow">
             <td class="width">Titel</td>
             <td class="adjacent">Datum</td>
-            <td class="adjacent">Export</td>
+            <td class="adjacent">Formaat</td>
         </tr>
     {% for generated_report in rg.generated_reports %}
         <tr>
         <td>
-            {{ generated_report.area}}
+            {% if rg.algemeen %}
+                {{ rg.title }} - {{ generated_report.data_set.name }}
+            {% else %}
+                {{ rg.title }}
+            {% endif %}
         </td ><td>
             {{ generated_report.generated_on|date:"d-m-Y" }}
         </td ><td>
-            {% if generated_report.rtf_document %}<a href="/">rtf</a> |{% endif %}
-            {% if generated_report.pdf_document %}<a href="/">pdf</a> |{% endif %}
-            {% if generated_report.csv_document %}<a href="/">csv</a>{% endif %}
-            {% if generated_report.xls_document %}| <a href="/">xls</a>{% endif %}
+            {% if generated_report.rtf_document %}<a href="{% url reportgenerator-generated generated_report.id 'rtf' %}">rtf</a> |{% endif %}
+            {% if generated_report.pdf_document %}<a href="{% url reportgenerator-generated generated_report.id 'pdf' %}">pdf</a> |{% endif %}
+            {% if generated_report.csv_document %}<a href="{% url reportgenerator-generated generated_report.id 'csv' %}">csv</a>{% endif %}
+            {% if generated_report.xls_document %}| <a href="{% url reportgenerator-generated generated_report.id 'xls' %}">xls</a>{% endif %}
         </td>
         </tr>
     {% endfor %}
