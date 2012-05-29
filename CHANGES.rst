@@ -5,7 +5,9 @@ Changelog of lizard-reportgenerator
 y (unreleased)
 --------------
 
-- Nothing changed yet.
+- bugfix in userrights
+
+- small improvement in index page for unselected area
 
 
 0.5 (2012-05-29)
