@@ -2,8 +2,8 @@ Changelog of lizard-reportgenerator
 ===================================================
 
 
-y (unreleased)
---------------
+0.6 (2012-05-29)
+----------------
 
 - bugfix in userrights
 
