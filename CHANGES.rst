@@ -5,7 +5,11 @@ Changelog of lizard-reportgenerator
 0.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- improved report overview page
+
+- added download functionality for history
+
+- pdf, csv and excel support
 
 
 0.4 (2012-02-02)
