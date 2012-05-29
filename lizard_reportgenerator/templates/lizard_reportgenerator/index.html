@@ -18,7 +18,7 @@
         {% if rg.area %}
             <h3>{{ rg.title }} -  {{ rg.area.name }} - <a style="font-size: smaller;" href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer ander gebied</a></h3>
         {% else %}
-            - <a style="font-size: smaller;" href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer een gebied</a></h3>
+            <h3>{{ rg.title }} - <a style="font-size: smaller;" href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer een gebied</a></h3>
         {% endif %}
         {% for report_template in rg.report_templates %}
 

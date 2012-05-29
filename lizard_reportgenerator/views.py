@@ -35,8 +35,8 @@ def index(request, template='lizard_reportgenerator/index.html'):
     if request.user.is_superuser:
         data_sets = DataSet.objects.all()
     else:
-        data_set_ids = getattr(request, 'ALLOWED_DATA_SET_IDS', None)
-        data_sets = DataSet.objects.filter(id__in=data_set_ids)
+        data_set_ids = getattr(request, 'ALLOWED_DATA_SET_IDS', [None])
+        data_sets = DataSet.objects.filter(permission_mappers__user_group__members=request.user)
 
     aan_afvoergebied = None
     krw_gebied = None
