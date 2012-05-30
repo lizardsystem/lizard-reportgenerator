@@ -36,7 +36,7 @@ def index(request, template='lizard_reportgenerator/index.html'):
         data_sets = DataSet.objects.all()
     else:
         data_set_ids = getattr(request, 'ALLOWED_DATA_SET_IDS', [None])
-        data_sets = DataSet.objects.filter(permission_mappers__user_group__members=request.user)
+        data_sets = DataSet.objects.filter(permission_mappers__user_group__members=request.user).distinct()
 
     aan_afvoergebied = None
     krw_gebied = None

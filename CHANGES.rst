@@ -5,7 +5,7 @@ Changelog of lizard-reportgenerator
 0.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- removed duplicated report links (pp ??)
 
 
 0.6.1 (2012-05-30)
