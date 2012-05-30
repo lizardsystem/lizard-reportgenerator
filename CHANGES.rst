@@ -5,7 +5,7 @@ Changelog of lizard-reportgenerator
 0.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fix ydev version problem.
 
 
 0.6 (2012-05-29)
