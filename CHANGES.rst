@@ -2,6 +2,12 @@ Changelog of lizard-reportgenerator
 ===================================================
 
 
+0.7 (unreleased)
+----------------
+
+- Nothing changed yet.
+
+
 0.6.1 (2012-05-30)
 ------------------
 
