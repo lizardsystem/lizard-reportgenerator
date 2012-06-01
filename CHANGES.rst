@@ -2,8 +2,8 @@ Changelog of lizard-reportgenerator
 ===================================================
 
 
-0.7 (unreleased)
-----------------
+0.6.3 (2012-06-01)
+------------------
 
 - open html-report in new window (pp 358)
 
