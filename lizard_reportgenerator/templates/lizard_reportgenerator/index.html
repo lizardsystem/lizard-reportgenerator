@@ -10,7 +10,7 @@
                 {% if report_template.pdf_support %}<a href="{% url reportgenerator-generate 'pdf' report_template.id data_set.id %}">pdf</a>  {% endif %}
                 {% if report_template.csv_support %}<a href="{% url reportgenerator-generate 'csv' report_template.id data_set.id %}">csv</a>{% endif %}
                 {% if report_template.xls_support%}<a href="{% url reportgenerator-generate 'xls' report_template.id data_set.id %}">xls</a>{% endif %}
-                <a href="{% url reportgenerator-generate 'html' report_template.id data_set.id %}">html</a>
+                <a href="{% url reportgenerator-generate 'html' report_template.id data_set.id %}" target="_blank">html</a>
                 <br>
             {% endfor %}
         {% endfor %}
@@ -29,7 +29,7 @@
                 {% if report_template.pdf_support %}<a href="{% url reportgenerator-generate 'pdf' report_template.id rg.area.ident %}">pdf</a>  {% endif %}
                 {% if report_template.csv_support %}<a href="{% url reportgenerator-generate 'csv' report_template.id rg.area.ident %}">csv</a>{% endif %}
                 {% if report_template.xls_support%}<a href="{% url reportgenerator-generate 'xls' report_template.id rg.area.ident %}">xls</a>{% endif %}
-                <a href="{% url reportgenerator-generate 'html' report_template.id rg.area.ident %}">html</a>
+                <a href="{% url reportgenerator-generate 'html' report_template.id rg.area.ident %}" target="_blank">html</a>
             {% endif %}
             <br>
         {% endfor %}

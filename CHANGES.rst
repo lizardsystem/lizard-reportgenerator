@@ -5,7 +5,7 @@ Changelog of lizard-reportgenerator
 0.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- open html-report in new window (pp 358)
 
 
 0.6.2 (2012-05-30)
