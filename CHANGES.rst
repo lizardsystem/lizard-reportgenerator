@@ -2,7 +2,7 @@ Changelog of lizard-reportgenerator
 ===================================================
 
 
-0.6.4 (unreleased)
+0.6.4 (2012-06-06)
 ------------------
 
 - fixes for ie
