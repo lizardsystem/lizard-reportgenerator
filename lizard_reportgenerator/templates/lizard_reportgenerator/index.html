@@ -16,9 +16,9 @@
         {% endfor %}
     {% else %}
         {% if rg.area %}
-            <h3>{{ rg.title }} -  {{ rg.area.name }} - <a style="font-size: smaller;" href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer ander gebied</a></h3>
+            <h3>{{ rg.title }} -  {{ rg.area.name }} - <a style="font-size: smaller;" href="javascript:void(0)" onclick="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer ander gebied</a></h3>
         {% else %}
-            <h3>{{ rg.title }} - <a style="font-size: smaller;" href="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer een gebied</a></h3>
+            <h3>{{ rg.title }} - <a style="font-size: smaller;" href="javascript:void(0)" onclick="javascript: Ext.getCmp('portalWindow').showNavigation('{{ rg.selection_id }}', true, true, false);">selecteer een gebied</a></h3>
         {% endif %}
         {% for report_template in rg.report_templates %}
 
@@ -36,7 +36,7 @@
     {% endif %}
     <br>
 
-    <h4><button onclick="javascript:Ext.get('lzrep_{{ rg.title|lower }}').show();Ext.get('lzrep_{{ rg.title|lower }}').dom.style.removeProperty('height');">Toon archief</button></h4>
+    <h4><button  onclick="javascript:Ext.get('lzrep_{{ rg.title|lower }}').show();Ext.get('lzrep_{{ rg.title|lower }}').setHeight(null);">Toon archief</button></h4>
     <div style="visibility:hidden;height:0;"  id="lzrep_{{ rg.title|lower }}" >
     <table class="">
         <tr class="yellow">
