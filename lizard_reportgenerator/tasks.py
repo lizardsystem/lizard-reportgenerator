@@ -16,12 +16,11 @@ from lizard_reportgenerator.models import ReportTemplate, GeneratedReport
 from lizard_security.models import DataSet
 from lizard_area.models import Area
 
+from lizard_task.task import task_logging
 
-
-from lizard_task.handler import get_handler
-#from lizard_task.task import task_logging
 
 @task()
+@task_logging
 def generate_reports(report_template_id=None,
                data_set=None,
                taskname="",
@@ -34,10 +33,8 @@ def generate_reports(report_template_id=None,
     ConfigurationToValidate.
 
     """
-    handler = get_handler(taskname=taskname, username=username)
+
     logger = logging.getLogger(taskname)
-    logger.addHandler(handler)
-    logger.setLevel(int(levelno))
 
     report_template = ReportTemplate.objects.get(pk=report_template_id)
     formats = []
@@ -52,16 +49,18 @@ def generate_reports(report_template_id=None,
 
     if report_template.kind == 'algemeen':
         generated_report = GeneratedReport(
-            template = report_template,
-            area = None,
-            data_set = DataSet.objects.get(pk=data_set) if data_set is not None else None,
-            generated_on = datetime.datetime.now(),
+            template=report_template,
+            area=None,
+            data_set=DataSet.objects.get(pk=data_set) if data_set is not None else None,
+            generated_on=datetime.datetime.now(),
         )
         #get id
         generated_report.save()
         for format in formats:
-            file_io = generate_report("automatische taak", format, report_template_id, data_set, True)
-            generated_report.save_file(file_io, format, '%s_%s'%(report_template.name, datetime.datetime.now().strftime('%d-%M-%Y_%Hu%M')))
+            file_io = generate_report(
+                "automatische taak", format, report_template_id, data_set, True)
+            generated_report.save_file(file_io, format, '%s_%s' % (
+                    report_template.name, datetime.datetime.now().strftime('%d-%M-%Y_%Hu%M')))
 
         generated_report.save()
 
@@ -75,22 +74,22 @@ def generate_reports(report_template_id=None,
 
         data_set = DataSet.objects.get(pk=data_set)
         for area in Area.objects.filter(data_set=data_set, is_active=True, area_class=area_class):
-            logger.info('report for area %s'%area.name)
+            logger.info('report for area %s' % area.name)
 
             generated_report = GeneratedReport(
-                template = report_template,
-                area = area,
-                data_set = data_set,
-                generated_on = datetime.datetime.now(),
+                template=report_template,
+                area=area,
+                data_set=data_set,
+                generated_on=datetime.datetime.now(),
                 )
             #get id
             generated_report.save()
             for format in formats:
-                file_io = generate_report("automatische taak", format, report_template_id, area.ident, True)
-                generated_report.save_file(file_io, format, '%s_%s_%s'%(report_template.name.replace('/','_'), area.ident, datetime.datetime.now().strftime('%d-%M-%Y_%Hu%M')))
+                file_io = generate_report(
+                    "automatische taak", format, report_template_id, area.ident, True)
+                generated_report.save_file(file_io, format, '%s_%s_%s' % (
+                        report_template.name.replace('/', '_'),
+                        area.ident,
+                        datetime.datetime.now().strftime('%d-%M-%Y_%Hu%M')))
 
             generated_report.save()
-
-
-    logger.removeHandler(handler)
-    return "<<import dbf>>"
