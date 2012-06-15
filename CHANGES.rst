@@ -2,7 +2,7 @@ Changelog of lizard-reportgenerator
 ===================================================
 
 
-0.6.5 (unreleased)
+0.6.5 (2012-06-15)
 ------------------
 
 - Changed loging of celery task.
