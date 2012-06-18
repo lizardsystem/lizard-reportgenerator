@@ -109,7 +109,6 @@ def get_pdf_report(report_template, username, area_id=None):
 
     report = getattr(report_module, report_template.generation_function)(username, format='html', area_id=area_id)
 
-    print "report: ", report
     
     # template = get_template(report_module)
     # context = Context(context_dict)
@@ -150,11 +149,9 @@ def create_csv_from_grid(grid):
 
     buffer = StringIO.StringIO()
 
-    print len(grid)
 
     grid = [[stringify(value) for value in row] for row in grid]
 
-    print len(grid)
 
     csv_writer = csv.writer(buffer, delimiter=',',
                             quoting=csv.QUOTE_MINIMAL)

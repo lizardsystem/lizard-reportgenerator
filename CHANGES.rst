@@ -5,7 +5,7 @@ Changelog of lizard-reportgenerator
 0.6.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Remove some print statements. Nothing really changed yet.
 
 
 0.6.5 (2012-06-15)
