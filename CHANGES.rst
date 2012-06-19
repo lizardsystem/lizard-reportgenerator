@@ -5,7 +5,9 @@ Changelog of lizard-reportgenerator
 0.6.6 (unreleased)
 ------------------
 
-- Remove some print statements. Nothing really changed yet.
+- Make pdf generator try to types of encoding
+
+- Monkeypatch urllib2 and httplib when retrieving images for the pdf.
 
 
 0.6.5 (2012-06-15)

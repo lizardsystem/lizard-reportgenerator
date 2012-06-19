@@ -12,6 +12,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 
 import xlwt as excel
+import urllib2
 from StringIO import StringIO
 import csv
 
@@ -96,30 +97,78 @@ class Error(Exception):
     """Base class for errors in this module."""
     pass
 
+
 class OutOfRangeError(Error):
     def __init__(self, msg):
         Exception.__init__(self, msg)
 
 
-
-
-def get_pdf_report(report_template, username, area_id=None):
+def get_pdf_report(report_template, username, area_id=None, request=None):
 
     report_module = __import__(report_template.generation_module, fromlist='something')
 
-    report = getattr(report_module, report_template.generation_function)(username, format='html', area_id=area_id)
+    generator = getattr(
+        report_module,
+        report_template.generation_function,
+    )
+    report = generator(
+        username,
+        format='html',
+        area_id=area_id,
+        request=request,
+    )
+   
+    try:
+        encoded_report = report.encode("UTF-8") # Unicode
+    except UnicodeEncodeError:
+        encoded_report = report.encode("ISO-8859-1")  # Latin
 
-    
-    # template = get_template(report_module)
-    # context = Context(context_dict)
-    # html = template.render(context)
     result = StringIO.StringIO()
-    pdf = pisa.pisaDocument(
-    StringIO.StringIO(report.encode("ISO-8859-1")), result) # Latin
-    # StringIO.StringIO(html.encode("UTF-8")), result) # Unicode
+
+    # Pisa is going to do requests to our django server and needs to
+    # breng the correct cookies. It uses httplib and urllib2 to do that. So
+    # let's install a special opener to urllib2 and monkeypatch httplib
+    # for the time being.
+
+    # Add the right cookies to urlopen
+    authenticated_opener = urllib2.build_opener()
+    cookie_header = (
+        'Cookie',
+        ';'.join(ck + '=' + cv 
+                 for ck, cv in request.COOKIES.items()),
+    )
+    authenticated_opener.addheaders.append(cookie_header)
+    urllib2.install_opener(authenticated_opener)
+
+    # Monkeypatch httplib to send our headers:
+    def monkeypatch_method(cls):
+        """ 
+        By guido himself
+        http://mail.python.org/pipermail/python-dev/2008-January/076194.html
+        """
+        def decorator(func):
+            setattr(cls, func.__name__, func)
+            return func
+        return decorator
+
+    from httplib import HTTPConnection
+    original_request_method = HTTPConnection.request
+
+    @monkeypatch_method(HTTPConnection)
+    def request(self, method, url, body=None, headers={}):
+        headers.update(dict([cookie_header]))
+        self._send_request(method, url, body, headers)
+
+    # Do the work
+    pdf = pisa.pisaDocument(StringIO.StringIO(encoded_report), result)
+
+    # Restore urllib2 and httplib
+    urllib2.install_opener(urllib2.build_opener())
+    HTTPConnection.request = original_request_method
+
     if not pdf.err:
         return result
-    return HttpResponse('We had some errors<pre>%s</pre>' % escape(html))
+    raise Exception
 
 
 from django.utils import encoding
@@ -217,27 +266,32 @@ def generate_report(request_or_username, format='pdf', report_id=None, area_id=N
     '''
         function calls generation functions (specified in the configuration) and returns document
     '''
-
     if type(request_or_username) == str:
         username = request_or_username
+        request = None
     else:
         username = request_or_username.user.get_full_name()
-
-
+        request = request_or_username
 
     report_template = ReportTemplate.objects.get(pk=report_id)
     report_module = __import__(report_template.generation_module, fromlist='something')
     #todo, improve interaction with return, saving achieve, etc
 
     if format == 'pdf':
-        pdf = get_pdf_report(report_template, username, area_id)
+        pdf = get_pdf_report(report_template, username, area_id, request=request)
         if return_as_file:
             return pdf
         else:
             return HttpResponse(pdf.getvalue(), mimetype='application/pdf')
 
     elif format == 'html':
-        report = getattr(report_module, report_template.generation_function)(username, format='html', report_id=report_id, area_id=area_id)
+        report = getattr(report_module, report_template.generation_function)(
+            username,
+            format='html',
+            report_id=report_id,
+            area_id=area_id,
+            request=request
+        )
         return HttpResponse(report, mimetype='text/html')
 
     elif format == 'rtf':
