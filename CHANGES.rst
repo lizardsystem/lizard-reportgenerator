@@ -5,7 +5,7 @@ Changelog of lizard-reportgenerator
 0.6.6 (unreleased)
 ------------------
 
-- Make pdf generator try to types of encoding
+- Make pdf generator try two types of encoding
 
 - Monkeypatch urllib2 and httplib when retrieving images for the pdf.
 
