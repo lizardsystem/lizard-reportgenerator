@@ -2,8 +2,8 @@ Changelog of lizard-reportgenerator
 ===================================================
 
 
-0.6.6 (unreleased)
-------------------
+0.6.6. (2012-06-20)
+-------------------
 
 - Make pdf generator try two types of encoding
 
