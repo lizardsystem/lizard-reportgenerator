@@ -266,6 +266,7 @@ def generate_report(request_or_username, format='pdf', report_id=None, area_id=N
     '''
         function calls generation functions (specified in the configuration) and returns document
     '''
+
     if type(request_or_username) == str:
         username = request_or_username
         request = None
@@ -295,11 +296,25 @@ def generate_report(request_or_username, format='pdf', report_id=None, area_id=N
         return HttpResponse(report, mimetype='text/html')
 
     elif format == 'rtf':
-        report = getattr(report_module, report_template.generation_function)(username, format='rtf', report_id=report_id, area_id=area_id)
+        report = getattr(report_module, report_template.generation_function)(username, format=format, report_id=report_id, area_id=area_id, request=request)
         if return_as_file:
             return report
         else:
             return HttpResponse(report, mimetype='application/rtf')
+
+    elif format == 'docx':
+        report = getattr(report_module, report_template.generation_function)(username, format=format, report_id=report_id, area_id=area_id, request=request)
+        if return_as_file:
+            return report
+        else:
+            return HttpResponse(doc, mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+
+    elif format == 'doc':
+        report = getattr(report_module, report_template.generation_function)(username, format=format, report_id=report_id, area_id=area_id, request=request)
+        if return_as_file:
+            return report
+        else:
+            return HttpResponse(doc, mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
 
     elif format == 'csv':
         grid = getattr(report_module, report_template.generation_function)(username, format='grid', report_id=report_id, area_id=area_id)
