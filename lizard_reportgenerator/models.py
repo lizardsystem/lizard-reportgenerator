@@ -39,6 +39,8 @@ class ReportTemplate(models.Model):
         help_text="json with extra arguments")
     rtf_support = models.BooleanField(
         default=False)
+    doc_support = models.BooleanField(
+        default=False)
     pdf_support = models.BooleanField(
         default=False)
     csv_support = models.BooleanField(

@@ -7,6 +7,7 @@
             {% for report_template in rg.report_templates %}
                 - {{ report_template.name }} - {{ data_set.name }} -
                 {% if report_template.rtf_support %}<a href="{% url reportgenerator-generate 'rtf' report_template.id data_set.id %}">rtf</a>  {% endif %}
+	        {% if report_template.rtf_support %}<a href="{% url reportgenerator-generate 'doc' report_template.id data_set.id %}">doc</a>  {% endif %}
                 {% if report_template.pdf_support %}<a href="{% url reportgenerator-generate 'pdf' report_template.id data_set.id %}">pdf</a>  {% endif %}
                 {% if report_template.csv_support %}<a href="{% url reportgenerator-generate 'csv' report_template.id data_set.id %}">csv</a>{% endif %}
                 {% if report_template.xls_support%}<a href="{% url reportgenerator-generate 'xls' report_template.id data_set.id %}">xls</a>{% endif %}
@@ -26,6 +27,7 @@
             {% if rg.area %}
                 -
                 {% if report_template.rtf_support %}<a href="{% url reportgenerator-generate 'rtf' report_template.id rg.area.ident %}">rtf</a>  {% endif %}
+                {% if report_template.rtf_support %}<a href="{% url reportgenerator-generate 'doc' report_template.id rg.area.ident %}">doc</a>  {% endif %}
                 {% if report_template.pdf_support %}<a href="{% url reportgenerator-generate 'pdf' report_template.id rg.area.ident %}">pdf</a>  {% endif %}
                 {% if report_template.csv_support %}<a href="{% url reportgenerator-generate 'csv' report_template.id rg.area.ident %}">csv</a>{% endif %}
                 {% if report_template.xls_support%}<a href="{% url reportgenerator-generate 'xls' report_template.id rg.area.ident %}">xls</a>{% endif %}
@@ -56,6 +58,7 @@
             {{ generated_report.generated_on|date:"d-m-Y" }}
         </td ><td>
             {% if generated_report.rtf_document %}<a href="{% url reportgenerator-generated generated_report.id 'rtf' %}">rtf</a> |{% endif %}
+            {% if generated_report.doc_document %}<a href="{% url reportgenerator-generated generated_report.id 'doc' %}">doc</a> |{% endif %}
             {% if generated_report.pdf_document %}<a href="{% url reportgenerator-generated generated_report.id 'pdf' %}">pdf</a> |{% endif %}
             {% if generated_report.csv_document %}<a href="{% url reportgenerator-generated generated_report.id 'csv' %}">csv</a>{% endif %}
             {% if generated_report.xls_document %}| <a href="{% url reportgenerator-generated generated_report.id 'xls' %}">xls</a>{% endif %}

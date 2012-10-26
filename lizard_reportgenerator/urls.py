@@ -15,7 +15,7 @@ admin.autodiscover()
 urlpatterns = patterns(
     '',
     url(r'^$', index, name='reportgenerator-index'),
-    url(r'^generate/(?P<format>.*)/(?P<report_id>.*)/(?P<area_id>.*)/$', generate_report, name='reportgenerator-generate'),
+    url(r'^generate/(?P<file_format>.*)/(?P<report_id>.*)/(?P<area_id>.*)/$', generate_report, name='reportgenerator-generate'),
     url(r'^generated/(?P<generated_report_id>.*)/(?P<file_format>.*)$', get_generated_report, name='reportgenerator-generated'),
     )
 urlpatterns += debugmode_urlpatterns()

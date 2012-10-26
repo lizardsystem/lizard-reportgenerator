@@ -5,7 +5,11 @@ Changelog of lizard-reportgenerator
 0.6.7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Implemented report generator for rtf, doc, docx file formats.
+
+- Added doc_support to field to RepportTemplate model.
+
+- Renamed varaibel 'format' to 'file_format'.
 
 
 0.6.6 (2012-06-20)
