@@ -20,7 +20,7 @@ install_requires = [
     'PyRTF',
     'xlwt',
     'reportlab',
-    'pisa',
+    #'pisa',
     'html5lib',
     'pyPdf',
     ],
