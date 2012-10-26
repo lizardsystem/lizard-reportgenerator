@@ -2,7 +2,7 @@ Changelog of lizard-reportgenerator
 ===================================================
 
 
-0.6.7 (unreleased)
+0.6.7 (2012-10-26)
 ------------------
 
 - Implemented report generator for rtf, doc, docx file formats.
