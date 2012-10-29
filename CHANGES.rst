@@ -2,7 +2,7 @@ Changelog of lizard-reportgenerator
 ===================================================
 
 
-0.6.8 (unreleased)
+0.6.8 (2012-10-29)
 ------------------
 
 - Fixed error in index.html template in case of supporting doc format. 
