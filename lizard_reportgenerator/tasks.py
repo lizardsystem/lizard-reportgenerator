@@ -38,14 +38,13 @@ def generate_reports(report_template_id=None,
 
     report_template = ReportTemplate.objects.get(pk=report_template_id)
     formats = []
-    if report_template.pdf_support:
-        formats.append('pdf')
+    
     if report_template.csv_support:
         formats.append('csv')
     if report_template.xls_support:
-        formats.append('xls')
-    #if report_templatet.rtf_support:
-    #    pass
+       formats.append('xls')
+    if report_template.rtf_support:
+       pass
 
     if report_template.kind == 'algemeen':
         generated_report = GeneratedReport(
@@ -57,6 +56,7 @@ def generate_reports(report_template_id=None,
         #get id
         generated_report.save()
         for format in formats:
+            logger.info("create doc for {0}, {1}, {2}".format(format, report_template.name, data_set))
             file_io = generate_report(
                 "automatische taak", format, report_template_id, data_set, True)
             generated_report.save_file(file_io, format, '%s_%s' % (
@@ -65,15 +65,19 @@ def generate_reports(report_template_id=None,
         generated_report.save()
 
     else:
-        print report_template.kind
-        print '----'
+        # if report_template.doc_support:
+        #     formats.append('doc')
+        if report_template.pdf_support:
+            formats.append('pdf')
+
         if report_template.kind == 'krw':
             area_class = Area.AREA_CLASS_KRW_WATERLICHAAM
         elif report_template.kind == 'aan_afvoer':
             area_class = Area.AREA_CLASS_AAN_AFVOERGEBIED
 
         data_set = DataSet.objects.get(pk=data_set)
-        for area in Area.objects.filter(data_set=data_set, is_active=True, area_class=area_class):
+        areas = Area.objects.filter(data_set=data_set, is_active=True, area_class=area_class)
+        for area in areas:
             logger.info('report for area %s' % area.name)
 
             generated_report = GeneratedReport(

@@ -21,5 +21,5 @@ class Command(BaseCommand):
     def generate_report(self):
 
         logger.info("start")
-        generate_reports(3,2)
+        generate_reports(4,2)
         logger.info("Finished.")

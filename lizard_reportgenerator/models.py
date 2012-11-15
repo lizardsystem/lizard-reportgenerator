@@ -61,6 +61,7 @@ class GeneratedReport(models.Model):
     data_set = models.ForeignKey(DataSet, blank=True, null=True)
 
     rtf_document = models.CharField(default='', blank=True, max_length=255) # Stores filenames
+    doc_document = models.CharField(default='', blank=True, max_length=255) # Stores filenames
     pdf_document = models.CharField(default='', blank=True, max_length=255) # Stores filenames
     csv_document = models.CharField(default='', blank=True, max_length=255) # Stores filenames
     xls_document = models.CharField(default='', blank=True, max_length=255) # Stores filenames

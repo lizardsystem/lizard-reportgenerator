@@ -5,7 +5,7 @@ Changelog of lizard-reportgenerator
 0.6.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed to run reports as a task.
 
 
 0.6.8 (2012-10-29)

@@ -23,8 +23,10 @@ class ReportTemplateAdmin(admin.ModelAdmin):
 
 
 class GeneratedReportAdmin(SecurityFilteredAdmin):
-    list_display = ('rtf_document',
+    list_display = ('doc_document',
                     'pdf_document',
+                    'xls_document',
+                    'csv_document',
                     'template',
                     'area',
                     'generated_on',
