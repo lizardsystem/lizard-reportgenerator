@@ -2,7 +2,7 @@ Changelog of lizard-reportgenerator
 ===================================================
 
 
-0.6.9 (unreleased)
+0.6.9 (2012-12-11)
 ------------------
 
 - Fix to run reports as a task.
