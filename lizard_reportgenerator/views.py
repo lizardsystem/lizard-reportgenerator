@@ -127,62 +127,41 @@ def get_pdf_report(report_template, username, area_id=None, request=None):
     # for the time being.
 
     # Add the right cookies to urlopen
-    # authenticated_opener = urllib2.build_opener()
-    # cookie_header = (
-    #     'Cookie',
-    #     ';'.join(ck + '=' + cv
-    #              for ck, cv in request.COOKIES.items()),
-    # )
-    # authenticated_opener.addheaders.append(cookie_header)
-    # urllib2.install_opener(authenticated_opener)
+    authenticated_opener = urllib2.build_opener()
+    cookie_header = (
+        'Cookie',
+        ';'.join(ck + '=' + cv
+                 for ck, cv in request.COOKIES.items()),
+    )
+    authenticated_opener.addheaders.append(cookie_header)
+    urllib2.install_opener(authenticated_opener)
 
     # Monkeypatch httplib to send our headers:
-    # def monkeypatch_method(cls):
-    #     """
-    #     By guido himself
-    #     http://mail.python.org/pipermail/python-dev/2008-January/076194.html
-    #     """
-    #     def decorator(func):
-    #         setattr(cls, func.__name__, func)
-    #         return func
-    #     return decorator
+    def monkeypatch_method(cls):
+        """
+        By guido himself
+        http://mail.python.org/pipermail/python-dev/2008-January/076194.html
+        """
+        def decorator(func):
+            setattr(cls, func.__name__, func)
+            return func
+        return decorator
 
-    # from httplib import HTTPConnection
-    # original_request_method = HTTPConnection.request
+    from httplib import HTTPConnection
+    original_request_method = HTTPConnection.request
 
-    # @monkeypatch_method(HTTPConnection)
-    # def request(self, method, url, body=None, headers={}):
-    #     headers.update(dict([cookie_header]))
-    #     self._send_request(method, url, body, headers)
+    @monkeypatch_method(HTTPConnection)
+    def request(self, method, url, body=None, headers={}):
+        headers.update(dict([cookie_header]))
+        self._send_request(method, url, body, headers)
 
     # Do the work
-    # import urllib
-    # from cookielib import CookieJar
-
-    # cj = CookieJar()
-    # opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-    # # input-type values from the html form
-    # formdata = { "username" : "admin", "password": "kikker123"}
-    # #data_encoded = urllib.urlencode(formdata)
-    # response = opener.open("http://192.168.20.11:8000/portal")
-    def link_callback(uri, rel):
-         # Do the work
-        import urllib
-        from cookielib import CookieJar
-
-        cj = CookieJar()
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-        # input-type values from the html form
-        formdata = { "username" : "admin", "password": "kikker123"}
-        #data_encoded = urllib.urlencode(formdata)
-        response = opener.open(uri)
-        return uri
-
-    pdf = pisa.pisaDocument(StringIO.StringIO(encoded_report), result, link_callback=link_callback)
+    pdf = pisa.pisaDocument(StringIO.StringIO(encoded_report), result)
 
     # Restore urllib2 and httplib
-    # urllib2.install_opener(urllib2.build_opener())
-    # HTTPConnection.request = original_request_method
+    urllib2.install_opener(urllib2.build_opener())
+    HTTPConnection.request = original_request_method
+
     if not pdf.err:
         return result
     raise Exception

@@ -5,7 +5,7 @@ Changelog of lizard-reportgenerator
 0.6.10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- PDF report
 
 
 0.6.9 (2012-12-11)
