@@ -176,7 +176,6 @@ def get_pdf_report(report_template, username, area_id=None, request=None):
         formdata = { "username" : "admin", "password": "kikker123"}
         #data_encoded = urllib.urlencode(formdata)
         response = opener.open(uri)
-        print("++++++++++++++++++", uri)
         return uri
 
     pdf = pisa.pisaDocument(StringIO.StringIO(encoded_report), result, link_callback=link_callback)
@@ -232,12 +231,12 @@ def create_xls_from_grid(grid):
     wb = excel.Workbook()
     ws = wb.add_sheet('rapport')
 
-    font1 = excel.File_Formatting.Font()
+    font1 = excel.Formatting.Font()
     font1.name = 'Arial'
     font1.height = 200
     font1.bold = True
 
-    font2 = excel.File_Formatting.Font()
+    font2 = excel.Formatting.Font()
     font2.name = 'Arial'
     font2.height = 160
 
@@ -336,7 +335,7 @@ def generate_report(request_or_username, file_format='pdf', report_id=None, area
         if return_as_file:
             return report
         else:
-            response = HttpResponse(report, mimetype='application/vnd.openxmlfile_file_formats-officedocument.wordprocessingml.document')
+            response = HttpResponse(report, mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
             response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
             return response
 
@@ -350,7 +349,7 @@ def generate_report(request_or_username, file_format='pdf', report_id=None, area
         if return_as_file:
             return report
         else:
-            response = HttpResponse(report, mimetype='application/vnd.openxmlfile_file_formats-officedocument.wordprocessingml.document')
+            response = HttpResponse(report, mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
             response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
             return response
 
@@ -374,7 +373,7 @@ def generate_report(request_or_username, file_format='pdf', report_id=None, area
             response['Content-Disposition'] = 'attachment; filename="%s.xls"' % 'rapport'
             return response
     else:
-        return HttpResponse('file_file_format niet ondersteund', mimetype='text/html')
+        return HttpResponse('format niet ondersteund', mimetype='text/html')
 
 
 def get_generated_report(request, generated_report_id=None, file_format='pdf'):
